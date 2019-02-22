@@ -10,10 +10,18 @@ update() {
 		echo "install 'dig'"
 		exit
 	fi
-
+	curl=$(which curl 2>/dev/null)
+	if [[ -z $curl ]]; then
+		echo "install 'curl'"
+		exit
+	fi
+    pub_ip=$(dig +short myip.opendns.com @resolver1.opendns.com)
+	if [[ -z $pub_ip ]]; then
+		pub_ip=$(curl whatismyip.akamai.com)
+	fi
 	cat << _EOF_ > $tmpfile
 LAST_TS=$(date +%s)
-IP_ADDR=$($dig +short myip.opendns.com @resolver1.opendns.com)
+IP_ADDR=$pub_ip
 _EOF_
 }
 
